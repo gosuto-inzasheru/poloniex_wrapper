@@ -14,8 +14,8 @@ class Poloniex {
 	}
 
 	protected function callPublic($call) {
-	    $uri = $this->publicUrl.'?command='.$call;
-	    return json_decode(file_get_contents($uri), true);
+		$uri = $this->publicUrl.'?command='.$call;
+		return json_decode(file_get_contents($uri), true);
 	}
 
 	//Public API Methods
@@ -25,7 +25,7 @@ class Poloniex {
 	 * @return array
 	 */
 	public function returnTicker() {
-	    return $this->callPublic('returnTicker');
+		return $this->callPublic('returnTicker');
 	}
 
 	/**
@@ -44,11 +44,11 @@ class Poloniex {
 	 */
 	public function returnOrderBook($currencyPair = 'all', $depth = null) {
 	    
-	    $call = 'returnOrderBook';
-	    $call .= '&currencyPair='.$currencyPair;
-	    $call .= ($depth) ? '&depth='.$depth : null;
-	    
-	    return $this->callPublic($call);
+		$call = 'returnOrderBook';
+		$call .= '&currencyPair='.$currencyPair;
+		$call .= ($depth) ? '&depth='.$depth : null;
+		
+		return $this->callPublic($call);
 	}
 
 	/**
@@ -60,12 +60,12 @@ class Poloniex {
 	 */
 	public function returnTradeHistory($currencyPair, $start = null, $end = null) {
 	    
-	    $call = 'returnTradeHistory';
-	    $call .= '&currencyPair='.$currencyPair;
-	    $call .= ($start) ? '&start='.$start : null;
-	    $call .= ($end) ? '&end='.$end : null;
-	    
-	    return $this->callPublic($call);
+		$call = 'returnTradeHistory';
+		$call .= '&currencyPair='.$currencyPair;
+		$call .= ($start) ? '&start='.$start : null;
+		$call .= ($end) ? '&end='.$end : null;
+		
+		return $this->callPublic($call);
 	}
 
 	/**
@@ -77,13 +77,13 @@ class Poloniex {
 	 * @return array
 	 */
 	public function returnChartData($currencyPair, $period, $start, $end) {
-	    $call = 'returnChartData';
-	    $call .= '&currencyPair='.$currencyPair;
-	    $call .= '&period='.$period;
-	    $call .= ($start) ? '&start='.$start : null;
-	    $call .= ($end) ? '&end='.$end : null;
-	    
-	    return $this->callPublic($call);
+		$call = 'returnChartData';
+		$call .= '&currencyPair='.$currencyPair;
+		$call .= '&period='.$period;
+		$call .= ($start) ? '&start='.$start : null;
+		$call .= ($end) ? '&end='.$end : null;
+		
+		return $this->callPublic($call);
 	}
 
 	/**
@@ -91,7 +91,7 @@ class Poloniex {
 	 * @return array
 	 */
 	public function returnCurrencies() {
-	    return $this->callPublic('returnCurrencies');
+		return $this->callPublic('returnCurrencies');
 	}
 
 	/**
@@ -100,10 +100,10 @@ class Poloniex {
 	 * @return array
 	 */
 	public function returnLoanOrders($currency) {
-	    $call = 'returnLoanOrders';
-	    $call .= '&currency='.$currency;
-	    
-	    return $this->callPublic($call);
+		$call = 'returnLoanOrders';
+		$call .= '&currency='.$currency;
+		
+		return $this->callPublic($call);
 	}
 }
 ?>
