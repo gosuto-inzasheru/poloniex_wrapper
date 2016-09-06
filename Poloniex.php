@@ -96,7 +96,7 @@ class Poloniex {
 
 	/**
 	 * Returns the list of loan offers and demands for a given currency, specified by the "currency" GET parameter.
-	 * @param string $currency Example: BTC_ETH
+	 * @param string $currency Example: BTC
 	 * @return array
 	 */
 	public function returnLoanOrders($currency) {
