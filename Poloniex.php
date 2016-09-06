@@ -14,8 +14,55 @@ class Poloniex {
 	}
 
 	protected function callPublic($call) {
-		$uri = $this->publicUrl.'?command='.$call;
+		$uri = $this->publicUrl.'?'.http_build_query($call);
 		return json_decode(file_get_contents($uri), true);
+	}
+
+	private function callTrading(array $req = array()) {
+		// API settings
+		$key = $this->apiKey;
+		$secret = $this->apiSecret;
+
+		// generate a nonce to avoid problems with 32bit systems
+		$mt = explode(' ', microtime());
+		$req['nonce'] = $mt[1].substr($mt[0], 2, 6);
+
+		// generate the POST data string
+		$post_data = http_build_query($req, '', '&');
+		$sign = hash_hmac('sha512', $post_data, $secret);
+
+		// generate the extra headers
+		$headers = array(
+			'Key: '.$key,
+			'Sign: '.$sign,
+		);
+
+		// curl handle (initialize if required)
+		static $ch = null;
+		if (is_null($ch)) {
+			$ch = curl_init();
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_USERAGENT,
+				'Mozilla/4.0 (compatible; Poloniex PHP bot; '.php_uname('a').'; PHP/'.phpversion().')'
+			);
+		}
+		curl_setopt($ch, CURLOPT_URL, $this->tradingApiUrl);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+		// run the query
+		$res = curl_exec($ch);
+
+		if ($res === false) throw new Exception('Curl error: '.curl_error($ch));
+		//echo $res;
+		$dec = json_decode($res, true);
+		if (!$dec){
+			//throw new Exception('Invalid data: '.$res);
+			return false;
+		}else{
+			return $dec;
+		}
 	}
 
 	//Public API Methods
@@ -25,7 +72,11 @@ class Poloniex {
 	 * @return array
 	 */
 	public function returnTicker() {
-		return $this->callPublic('returnTicker');
+		return $this->callPublic(
+			array(
+				'command' => 'returnTicker',
+			)
+		);
 	}
 
 	/**
@@ -33,7 +84,11 @@ class Poloniex {
 	 * @return array
 	 */
 	public function return24hVolume() {
-		return $this->callPublic('return24hVolume');
+		return $this->callPublic(
+			array(
+				'command' => 'return24hVolume',
+			)
+		);
 	}
 
 	/**
@@ -43,12 +98,13 @@ class Poloniex {
 	 * @return array
 	 */
 	public function returnOrderBook($currencyPair = 'all', $depth = null) {
-	    
-		$call = 'returnOrderBook';
-		$call .= '&currencyPair='.$currencyPair;
-		$call .= ($depth) ? '&depth='.$depth : null;
-		
-		return $this->callPublic($call);
+		return $this->callPublic(
+			array(
+				'command' => 'returnOrderBook',
+				'currencyPair' => $currencyPair,
+				'depth' => $depth,
+			)
+		);
 	}
 
 	/**
@@ -59,13 +115,14 @@ class Poloniex {
 	 * @return array
 	 */
 	public function returnTradeHistory($currencyPair, $start = null, $end = null) {
-	    
-		$call = 'returnTradeHistory';
-		$call .= '&currencyPair='.$currencyPair;
-		$call .= ($start) ? '&start='.$start : null;
-		$call .= ($end) ? '&end='.$end : null;
-		
-		return $this->callPublic($call);
+		return $this->callPublic(
+			array(
+				'command' => 'returnTradeHistory',
+				'currencyPair' => $currencyPair,
+				'start' => $start,
+				'end' => $end,
+			)
+		);
 	}
 
 	/**
@@ -77,13 +134,15 @@ class Poloniex {
 	 * @return array
 	 */
 	public function returnChartData($currencyPair, $period, $start, $end) {
-		$call = 'returnChartData';
-		$call .= '&currencyPair='.$currencyPair;
-		$call .= '&period='.$period;
-		$call .= ($start) ? '&start='.$start : null;
-		$call .= ($end) ? '&end='.$end : null;
-		
-		return $this->callPublic($call);
+		return $this->callPublic(
+			array(
+				'command' => 'returnChartData',
+				'currencyPair' => $currencyPair,
+				'period' => $period,
+				'start' => $start,
+				'end' => $end,
+			)
+		);
 	}
 
 	/**
@@ -100,10 +159,16 @@ class Poloniex {
 	 * @return array
 	 */
 	public function returnLoanOrders($currency) {
-		$call = 'returnLoanOrders';
-		$call .= '&currency='.$currency;
-		
-		return $this->callPublic($call);
+		return $this->callPublic(
+			array(
+				'command' => 'returnLoanOrders',
+				'currency' => $currency,
+			)
+		);
 	}
+
+	//Trading API Methods
+
+
 }
 ?>
