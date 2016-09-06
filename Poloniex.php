@@ -55,10 +55,8 @@ class Poloniex {
 		$res = curl_exec($ch);
 
 		if ($res === false) throw new Exception('Curl error: '.curl_error($ch));
-		//echo $res;
 		$dec = json_decode($res, true);
 		if (!$dec){
-			//throw new Exception('Invalid data: '.$res);
 			return false;
 		}else{
 			return $dec;
@@ -169,6 +167,57 @@ class Poloniex {
 
 	//Trading API Methods
 
-
+	/**
+	 * Returns all of your available balances.
+	 * @return array
+	 */
+	public function returnBalances() {
+		return $this->callTrading( 
+			array(
+				'command' => 'returnBalances'
+			)
+		);
+	}
+	
+	/**
+	 * Returns all of your balances, including available balance, balance on orders, and the estimated BTC value of your balance. By default, this call is limited to your exchange account unless account is specified.
+	 * @param $account Set the "account" POST parameter to "all" to include your margin and lending accounts.
+	 * @return array
+	 */
+	public function returnCompleteBalances($account = null) {
+		return $this->callTrading( 
+			array(
+				'command' => 'returnCompleteBalances',
+				'account' => $account,
+			)
+		);
+	}
+	
+	/**
+	 * Returns all of your deposit addresses.
+	 * @return array
+	 */
+	public function returnDepositAddresses() {		
+		return $this->callTrading( 
+			array(
+				'command' => 'returnDepositAddresses',
+			)
+		);
+	}
+	
+	/**
+	 * Generates a new deposit address for the currency specified by the "currency" POST parameter.
+	 * Only one address per currency per day may be generated, and a new address may not be generated before the previously-generated one has been used.
+	 * @param $currency
+	 * @return array
+	 */
+	public function generateNewAddress($currency) {		
+		return $this->callTrading( 
+			array(
+				'command' => 'returnOpenOrders',
+				'currency' => $currency,
+			)
+		);
+	}
 }
 ?>
