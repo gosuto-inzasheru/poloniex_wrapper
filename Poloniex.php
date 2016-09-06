@@ -21,15 +21,15 @@ class Poloniex {
 	//Public API Methods
 	
 	/**
-    * Returns the ticker for all markets.
-    * @return array
-    */
+	* Returns the ticker for all markets.
+	* * @return array
+	*/
 	public function returnTicker() {
 	    return $this->callPublic('returnTicker');
 	}
 
 	/**
-    * Returns the 24-hour volume for all markets, plus totals for primary currencies.
+	* Returns the 24-hour volume for all markets, plus totals for primary currencies.
     * @return array
     */
 	public function return24hVolume() {
@@ -37,9 +37,9 @@ class Poloniex {
 	}
 	
 	/**
-    * Returns the order book for a given market, as well as a sequence number for use with the Push API and an indicator specifying whether the market is frozen. You may set currencyPair to "all" to get the order books of all markets. Set depth to limit the market depth retrieved.
-    * @param string $currencyPair Example: BTC_ETH
-    * @param integer $depth
+    * Returns the order book for a given market, as well as a sequence number for use with the Push API and an indicator specifying whether the market is frozen.
+    * @param string $currencyPair Set to all to get the order books of all markets. Otherwise define a currency pair such as BTC_ETH
+    * @param integer $depth Limits the market to a certain amount of orders.
     * @return array
     */
 	public function returnOrderBook($currencyPair = 'all', $depth = null) {
