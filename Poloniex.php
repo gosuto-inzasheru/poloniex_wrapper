@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Full wrapper for all methods documented at https://poloniex.com/support/api/
+ * All command names are the same as in the API documentation except for returnTradeHistory as it exists in both the public and trading APIs..
+ */
+
 class Poloniex {
 
 	protected $apiKey;
@@ -8,7 +13,7 @@ class Poloniex {
 	protected $publicUrl = "https://poloniex.com/public";
 	protected $tradingApiUrl = "https://poloniex.com/tradingApi";
 
-	public function __construct($apiKey, $apiSecret) {
+	public function __construct($apiKey = null, $apiSecret = null) {
 		$this->apiKey = $apiKey;
 		$this->apiSecret = $apiSecret;
 	}
@@ -112,7 +117,7 @@ class Poloniex {
 	 * @param $end UNIX timestamp
 	 * @return array
 	 */
-	public function returnTradeHistory($currencyPair, $start = null, $end = null) {
+	public function returnPublicTradeHistory($currencyPair, $start = null, $end = null) {
 		return $this->callPublic(
 			array(
 				'command' => 'returnTradeHistory',
@@ -216,6 +221,119 @@ class Poloniex {
 			array(
 				'command' => 'returnOpenOrders',
 				'currency' => $currency,
+			)
+		);
+	}
+
+	/**
+	 * Returns your deposit and withdrawal history within a range, specified by the "start" and "end" POST parameters, both of which should be given as UNIX timestamps.
+	 * @param $start UNIX timestamp
+	 * @param $end UNIX timestamp
+	 * @return array
+	 */
+	public function returnDepositsWithdrawals($start, $end) {		
+		return $this->callTrading( 
+			array(
+				'command' => 'returnDepositsWithdrawals',
+				'start' => $start,
+				'end' => $end,
+			)
+		);
+	}
+
+	/**
+	 * Returns your open orders for a given market.
+	 * @param $currencyPair Specify given market, e.g. "BTC_XCP". Defaults to "all" to return open orders for all markets.
+	 * @return array
+	 */
+	public function returnOpenOrders($currencyPair = 'all') {		
+		return $this->callTrading( 
+			array(
+				'command' => 'returnOpenOrders',
+				'currencyPair' => $currencyPair,
+			)
+		);
+	}
+	
+	/**
+	 * Returns your trade history for a given market. If you do not specify a range, it will be limited to one day.
+	 * @param $currencyPair Specifies which market, e.g. "BTC_XCP". Defaults to "all" to return your trade history for all markets. 
+	 * @param $start UNIX timestamp
+	 * @param $end UNIX timestamp
+	 * @return array
+	 */
+	public function returnTradeHistory($currencyPair = 'all', $start = null, $end = null) {		
+		return $this->callTrading( 
+			array(
+				'command' => 'returnTradeHistory',
+				'currencyPair' => $currencyPair,
+				'start' => $start,
+				'end' => $end,
+			)
+		);
+	}
+
+	/**
+	 * Returns all trades involving a given order, specified by the "orderNumber" POST parameter. If no trades for the order have occurred or you specify an order that does not belong to you, you will receive an error.
+	 * @param $currency
+	 * @return array
+	 */
+	public function returnOrderTrades($orderNumber) {		
+		return $this->callTrading( 
+			array(
+				'command' => 'returnOrderTrades',
+				'orderNumber' => $orderNumber,
+			)
+		);
+	}	
+
+	/**
+	 * Places a limit buy order in a given market.
+	 * You may optionally set "fillOrKill", "immediateOrCancel", "postOnly" to 1. A fill-or-kill order will either fill in its entirety or be completely aborted. An immediate-or-cancel order can be partially or completely filled, but any portion of the order that cannot be filled immediately will be canceled rather than left on the order book. A post-only order will only be placed if no portion of it fills immediately; this guarantees you will never pay the taker fee on any part of the order that fills.
+	 * @param $currencyPair
+	 * @param $rate
+	 * @param $amount
+	 * @return integer If successful, the method will return the order number.
+	 */
+	public function buy($currencyPair, $rate, $amount) {
+		return $this->callTrading( 
+			array(
+				'command' => 'buy',	
+				'currencyPair' => $currencyPair,
+				'rate' => $rate,
+				'amount' => $amount,
+			)
+		);
+	}
+
+	/**
+	 * Places a sell order in a given market. Parameters and output are the same as for the buy method.
+	 * @param $currencyPair
+	 * @param $rate
+	 * @param $amount
+	 * @return integer If successful, the method will return the order number.
+	 */	
+	public function sell($currencyPair, $rate, $amount) {
+		return $this->callTrading( 
+			array(
+				'command' => 'sell',	
+				'currencyPair' => $currencyPair,
+				'rate' => $rate,
+				'amount' => $amount,
+			)
+		);
+	}
+	
+	/**
+	 * Cancels an order you have placed in a given market.
+	 * @param $orderNumber
+	 * @return array
+	 */	
+	public function cancelOrder($orderNumber) {
+		return $this->callTrading( 
+			array(
+				'command' => 'cancelOrder',	
+				'orderNumber' => $orderNumber,
 			)
 		);
 	}
