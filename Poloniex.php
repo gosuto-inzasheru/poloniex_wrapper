@@ -337,5 +337,23 @@ class Poloniex {
 			)
 		);
 	}
+	
+	/**
+	 * Cancels an order and places a new one of the same type in a single atomic transaction, meaning either both operations will succeed or both will fail.
+	 * @param $orderNumber
+	 * @param $rate
+	 * @param $amount You may optionally specify "amount" if you wish to change the amount of the new order.
+	 * @return array
+	 */	
+	public function moveOrder($orderNumber, $rate, $amount = null) {
+		return $this->callTrading( 
+			array(
+				'command' => 'cancelOrder',	
+				'orderNumber' => $orderNumber,
+				'rate' => $rate,
+				'amount' => $amount,
+			)
+		);
+	}
 }
 ?>
